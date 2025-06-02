@@ -1,0 +1,71 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #cecece;
+  --foreground: #171717;
+  --font: "Ubuntu Mono", monospace;
+}
+
+.dark {
+  --background: #171717;
+  --foreground: #ededed;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font);
+  scroll-behavior: smooth;
+  transition: background-color 0.7s ease-in-out, color 0.7s ease-in-out;
+}
+
+.hoverEffect {
+  @apply transition-all duration-300 cursor-pointer ease-in-out scale-100 hover:scale-125;
+}
+
+/* ✅ Swiper navigation buttons */
+.swiper-button-prev,
+.swiper-button-next,
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  color: black !important;
+}
+
+.dark .swiper-button-prev,
+.dark .swiper-button-next,
+.dark .swiper-button-prev::after,
+.dark .swiper-button-next::after {
+  color: rgb(0, 141, 249) !important;
+}
+
+.swiper-pagination-bullet {
+  background-color: rgb(4, 218, 4) !important;
+}
+.dark .swiper-pagination-bullet {
+  background-color: rgb(
+    255,
+    255,
+    255
+  ) !important; /* or use your preferred blue */
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0.4;
+  }
+  30% {
+    opacity: 0.6;
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-20vh) rotate(360deg);
+    opacity: 1;
+  }
+}
