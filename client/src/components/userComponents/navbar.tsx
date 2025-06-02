@@ -1,7 +1,7 @@
 "use client";
 import { navbarData } from "@/constants/navbar";
 import React, { useState } from "react";
-import Logo from "./logo";
+import Logo from "../logo";
 import Dark from "../darkMode";
 import useGetActive from "@/utils/useGetActive";
 

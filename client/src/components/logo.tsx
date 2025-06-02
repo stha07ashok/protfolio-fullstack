@@ -1,3 +1,4 @@
+"use client";
 import useGetActive from "@/utils/useGetActive";
 
 interface Prpos {
