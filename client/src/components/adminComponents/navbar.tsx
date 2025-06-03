@@ -9,7 +9,7 @@ const Navbar = () => {
       className="w-full py-6 px-3 md:px-4 lg:px-0 border-b-2 shadow-lg bg-gradient-to-r from-green-500 to-emerald-200 
  border border-white dark:bg-gradient-to-r dark:from-blue-700 dark:to-violet-950"
     >
-      <div className="flex flex-row items-center justify-between">
+      <div className="flex flex-row items-center justify-between mx-4">
         <div className="w-full flex justify-between items-center gap-4">
           <Link href="/admin" className="flex items-center mx-4">
             <Logo title="Ashok" subtitle="." />
