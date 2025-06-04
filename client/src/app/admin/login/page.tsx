@@ -3,9 +3,13 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
+import axios from "axios";
+import getBaseUrl from "@/baseUrl/baseUrl";
+import { useRouter } from "next/navigation";
 
 const AdminLogin = () => {
   const [message, setMessage] = useState("");
+  const router = useRouter();
 
   interface FormData {
     username: string;
@@ -19,7 +23,34 @@ const AdminLogin = () => {
   } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
-    console.log(data);
+    try {
+      const response = await axios.post(`${getBaseUrl()}/admin/login`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const auth = response.data;
+      if (auth.token) {
+        localStorage.setItem("token", auth.token);
+
+        // Dispatch the authChange event to notify Navbar
+        window.dispatchEvent(new Event("authChange"));
+
+        // Optional: Set a timer to remove the token after 1 hour
+        setTimeout(() => {
+          localStorage.removeItem("token");
+          window.dispatchEvent(new Event("authChange")); // Notify logout
+          alert("Token has expired! Please login again.");
+          router.push("/admin/login");
+        }, 3600 * 1000);
+
+        alert("Admin Login successful!");
+        router.push("/admin/dashboard");
+      }
+    } catch (error) {
+      setMessage("Please provide a valid username and password");
+      console.error(error);
+    }
   };
 
   return (
@@ -77,7 +108,7 @@ const AdminLogin = () => {
           <div className="w-full">
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-200  dark:bg-gradient-to-r dark:from-blue-700 dark:to-violet-950 text-white font-bold py-2 px-8 rounded-lg focus:outline-none  transition-all duration-300 cursor-pointer ease-in-out hover:scale-110 border-2 "
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-200  dark:bg-gradient-to-r dark:from-blue-700 dark:to-violet-950 text-white font-bold py-2 px-8 rounded-lg focus:outline-none  transition-all duration-300 cursor-pointer ease-in-out hover:scale-110 border-2"
             >
               Login
             </button>
