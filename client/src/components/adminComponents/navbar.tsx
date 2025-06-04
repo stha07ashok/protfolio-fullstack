@@ -6,6 +6,8 @@ import Dark from "../darkMode";
 import Link from "next/link";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
+import getBaseUrl from "@/baseUrl/baseUrl";
+import axios from "axios";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -35,12 +37,17 @@ const Navbar = () => {
     setShowProfileMenu((prev) => !prev);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
+  const handleLogout = async () => {
+    await axios.post(`${getBaseUrl()}/admin/logout`, { withCredentials: true });
+
+    localStorage.removeItem("authToken"); // Clear token
+    localStorage.removeItem("user");
+
     window.dispatchEvent(new Event("authChange")); // Notify listeners about logout
     setIsLoggedIn(false);
     setShowProfileMenu(false);
-    router.push("/admin/login");
+
+    router.push("/admin");
   };
 
   return (
