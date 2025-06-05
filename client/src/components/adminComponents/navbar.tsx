@@ -6,6 +6,11 @@ import Dark from "../darkMode";
 import Link from "next/link";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
+import SwalImport from "sweetalert2";
+
+const Swal = SwalImport as unknown as {
+  fire: (options: any) => Promise<any>;
+};
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -38,9 +43,24 @@ const Navbar = () => {
   const handleLogout = async () => {
     localStorage.removeItem("token");
 
-    window.dispatchEvent(new Event("authChange")); // Notify listeners about logout
+    window.dispatchEvent(new Event("authChange"));
     setIsLoggedIn(false);
     setShowProfileMenu(false);
+    await Swal.fire({
+      position: "top",
+      icon: "success",
+      title: "Logged out",
+      text: "Logout successful!",
+      timer: 1500,
+      showConfirmButton: false,
+      toast: true,
+      customClass: {
+        popup:
+          "bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-lg border border-gray-300 dark:border-gray-700",
+        title: "font-semibold",
+        content: "text-sm",
+      },
+    });
 
     router.push("/admin");
   };

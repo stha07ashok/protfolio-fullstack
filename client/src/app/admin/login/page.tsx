@@ -6,7 +6,11 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import getBaseUrl from "@/baseUrl/baseUrl";
 import { useRouter } from "next/navigation";
+import SwalImport from "sweetalert2";
 
+const Swal = SwalImport as unknown as {
+  fire: (options: any) => Promise<any>;
+};
 const AdminLogin = () => {
   const [message, setMessage] = useState("");
   const router = useRouter();
@@ -39,11 +43,32 @@ const AdminLogin = () => {
         setTimeout(() => {
           localStorage.removeItem("token");
           window.dispatchEvent(new Event("authChange"));
-          alert("Token expired! Please login again.");
-          router.push("/admin/login");
+          Swal.fire({
+            icon: "warning",
+            title: "Session Expired",
+            text: "Token expired! Please login again.",
+            confirmButtonText: "OK",
+          }).then(() => {
+            router.push("/admin/login");
+          });
         }, 3600 * 1000);
 
-        alert("Admin Login successful!");
+        await Swal.fire({
+          position: "top",
+          icon: "success",
+          title: "Logged out",
+          text: "Logout successful!",
+          timer: 1500,
+          showConfirmButton: false,
+          toast: true,
+          customClass: {
+            popup:
+              "bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-lg border border-gray-300 dark:border-gray-700",
+            title: "font-semibold",
+            content: "text-sm",
+          },
+        });
+
         router.push("/admin/dashboard");
       }
     } catch (error) {
