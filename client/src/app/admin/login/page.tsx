@@ -62,7 +62,7 @@ const AdminLogin = () => {
         transition={{ duration: 1 }}
         className="w-full max-w-sm mx-auto shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 border-2"
       >
-        <h2 className="text-xl font-semibold mb-4">Admin Dashboard Login</h2>
+        <h2 className="text-xl font-semibold mb-4">Ashok`s Dashboard Login</h2>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
