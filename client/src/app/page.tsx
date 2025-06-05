@@ -1,9 +1,9 @@
 "use client";
-import AboutMe from "@/components/userComponents/aboutMe";
-import Contact from "@/components/userComponents/contact";
-import Hero from "@/components/userComponents/hero";
-import Projects from "@/components/userComponents/projects";
-import Services from "@/components/userComponents/services";
+import AboutMe from "@/components/clientComponents/aboutMe";
+import Contact from "@/components/clientComponents/contact";
+import Hero from "@/components/clientComponents/hero";
+import Projects from "@/components/clientComponents/projects";
+import Services from "@/components/clientComponents/services";
 import AnimatedSquares from "@/utils/AnimatedSquares";
 import Dots from "@/utils/dots";
 import ScrollLine from "@/utils/scrollLine";

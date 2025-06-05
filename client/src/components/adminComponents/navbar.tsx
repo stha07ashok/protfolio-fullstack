@@ -52,9 +52,8 @@ const Navbar = () => {
     >
       <div className="flex flex-row items-center justify-between mx-4">
         <div className="w-full flex justify-between items-center gap-4">
-          <Link href="/admin" className="flex items-center mx-4">
-            <Logo title="Ashok" subtitle="." />
-          </Link>
+          <Logo title="<Ashok/>" subtitle="." />
+
           <Dark />
         </div>
 

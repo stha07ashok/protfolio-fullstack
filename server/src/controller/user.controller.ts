@@ -40,6 +40,3 @@ export const getAdmin = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const logout = async (req: Request, res: Response) => {
-  res.status(200).json({ success: true, message: "Logged out successfully" });
-};

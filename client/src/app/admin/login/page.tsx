@@ -25,22 +25,21 @@ const AdminLogin = () => {
   const onSubmit = async (data: FormData) => {
     try {
       const response = await axios.post(`${getBaseUrl()}/admin/login`, data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
       const auth = response.data;
+
       if (auth.token) {
         localStorage.setItem("token", auth.token);
 
-        // Dispatch the authChange event to notify Navbar
+        // Notify auth context of login
         window.dispatchEvent(new Event("authChange"));
 
-        // Optional: Set a timer to remove the token after 1 hour
+        // Optional: expire token after 1 hour
         setTimeout(() => {
           localStorage.removeItem("token");
-          window.dispatchEvent(new Event("authChange")); // Notify logout
-          alert("Token has expired! Please login again.");
+          window.dispatchEvent(new Event("authChange"));
+          alert("Token expired! Please login again.");
           router.push("/admin/login");
         }, 3600 * 1000);
 
@@ -62,11 +61,11 @@ const AdminLogin = () => {
         transition={{ duration: 1 }}
         className="w-full max-w-sm mx-auto shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 border-2"
       >
-        <h2 className="text-xl font-semibold mb-4">Ashok`s Dashboard Login</h2>
+        <h2 className="text-xl font-semibold mb-4">Ashok's Dashboard Login</h2>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
-            <label className="block text-sm font-bold mb-2" htmlFor="username">
+            <label htmlFor="username" className="block text-sm font-bold mb-2">
               Username
             </label>
             <input
@@ -84,7 +83,7 @@ const AdminLogin = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-bold mb-2" htmlFor="password">
+            <label htmlFor="password" className="block text-sm font-bold mb-2">
               Password
             </label>
             <input
@@ -105,14 +104,12 @@ const AdminLogin = () => {
             <p className="text-red-500 text-xs italic mb-3">{message}</p>
           )}
 
-          <div className="w-full">
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-200  dark:bg-gradient-to-r dark:from-blue-700 dark:to-violet-950 text-white font-bold py-2 px-8 rounded-lg focus:outline-none  transition-all duration-300 cursor-pointer ease-in-out hover:scale-110 border-2"
-            >
-              Login
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-green-500 to-emerald-200 dark:bg-gradient-to-r dark:from-blue-700 dark:to-violet-950 text-white font-bold py-2 px-8 rounded-lg focus:outline-none transition-all duration-300 cursor-pointer ease-in-out hover:scale-110 border-2"
+          >
+            Login
+          </button>
         </form>
       </motion.div>
     </div>

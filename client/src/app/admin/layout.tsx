@@ -1,19 +1,17 @@
 import React, { ReactNode } from "react";
 import "../globals.css";
-import Navbar from "@/components/adminComponents/navbar";
-import Footer from "@/components/adminComponents/footer";
-import ThemeProvider from "@/utils/themeProvider";
+import { AuthProvider } from "@/context/authContext";
+import AdminLayout from "@/components/adminComponents/adminLayout";
+import { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Ashok Shrestha - Admin",
 };
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default function AdminRootLayout({ children }: { children: ReactNode }) {
   return (
-    <ThemeProvider>
-      <Navbar />
-      {children}
-      <Footer />
-    </ThemeProvider>
+    <AuthProvider>
+      <AdminLayout>{children}</AdminLayout>
+    </AuthProvider>
   );
 }
