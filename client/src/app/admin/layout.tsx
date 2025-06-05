@@ -10,14 +10,10 @@ export const metadata = {
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body>
-        <ThemeProvider>
-          <Navbar />
-          {children}
-          <Footer />
-        </ThemeProvider>
-      </body>
-    </html>
+    <ThemeProvider>
+      <Navbar />
+      {children}
+      <Footer />
+    </ThemeProvider>
   );
 }
