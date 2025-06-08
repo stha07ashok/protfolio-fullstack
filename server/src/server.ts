@@ -1,13 +1,15 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import { initializeDatabase } from "./database/dbConnection";
 import cors from "cors";
+import { initializeDatabase } from "./database/dbConnection";
 import { userRouter } from "./routes/user.router";
+import { userMessage } from "./routes/message.router";
+
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 4000;
 
 app.use(
   cors({
@@ -23,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use("/admin", userRouter);
+app.use("/admin/message", userMessage);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");

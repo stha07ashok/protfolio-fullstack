@@ -1,144 +1,127 @@
 "use client";
 
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import getBaseUrl from "@/baseUrl/baseUrl";
-import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import SwalImport from "sweetalert2";
+import getBaseUrl from "@/baseUrl/baseUrl";
 
 const Swal = SwalImport as unknown as {
   fire: (options: any) => Promise<any>;
 };
-const AdminLogin = () => {
-  const [message, setMessage] = useState("");
-  const router = useRouter();
 
-  interface FormData {
-    username: string;
-    password: string;
+interface Message {
+  Name: string;
+  Email: string;
+  Phone?: string;
+  Address?: string;
+  Message: string;
+  Service?: string;
+  DateTime?: string;
+}
+
+const Messages: React.FC = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await axios.get(
+          `${getBaseUrl()}/admin/messages/getMessages`
+        );
+        setMessages(response.data.data);
+      } catch (err: any) {
+        console.error(err);
+        setError("Failed to load messages.");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to load messages from the server.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-xl font-semibold"
+        >
+          Loading messages...
+        </motion.div>
+      </div>
+    );
   }
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>();
-
-  const onSubmit = async (data: FormData) => {
-    try {
-      const response = await axios.post(`${getBaseUrl()}/admin/login`, data, {
-        headers: { "Content-Type": "application/json" },
-      });
-      const auth = response.data;
-
-      if (auth.token) {
-        localStorage.setItem("token", auth.token);
-
-        // Notify auth context of login
-        window.dispatchEvent(new Event("authChange"));
-
-        // Optional: expire token after 1 hour
-        setTimeout(() => {
-          localStorage.removeItem("token");
-          window.dispatchEvent(new Event("authChange"));
-          Swal.fire({
-            icon: "warning",
-            title: "Session Expired",
-            text: "Token expired! Please login again.",
-            confirmButtonText: "OK",
-          }).then(() => {
-            router.push("/admin/login");
-          });
-        }, 3600 * 1000);
-
-        await Swal.fire({
-          position: "top",
-          icon: "success",
-          title: "Logged out",
-          text: "Logout successful!",
-          timer: 1500,
-          showConfirmButton: false,
-          toast: true,
-          customClass: {
-            popup:
-              "bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-lg border border-gray-300 dark:border-gray-700",
-            title: "font-semibold",
-            content: "text-sm",
-          },
-        });
-
-        router.push("/admin/dashboard");
-      }
-    } catch (error) {
-      setMessage("Please provide a valid username and password");
-      console.error(error);
-    }
-  };
-
   return (
-    <div className="h-screen flex justify-center items-center">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-10 px-4">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -50 }}
-        transition={{ duration: 1 }}
-        className="w-full max-w-sm mx-auto shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 border-2"
+        transition={{ duration: 0.6 }}
+        className="max-w-4xl mx-auto"
       >
-        <h2 className="text-xl font-semibold mb-4">Ashok's Dashboard Login</h2>
+        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-white">
+          Received Messages
+        </h2>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-4">
-            <label htmlFor="username" className="block text-sm font-bold mb-2">
-              Username
-            </label>
-            <input
-              {...register("username", { required: true })}
-              type="text"
-              id="username"
-              placeholder="Username"
-              className="bg-transparent shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow"
-            />
-            {errors.username && (
-              <p className="text-red-500 text-xs italic">
-                Username is required
-              </p>
-            )}
+        {messages.length === 0 ? (
+          <p className="text-center text-gray-500 dark:text-gray-300">
+            No messages found.
+          </p>
+        ) : (
+          <div className="grid gap-6">
+            {messages.map((msg, index) => (
+              <div
+                key={msg.Email + msg.DateTime + index}
+                className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow p-5"
+              >
+                <p>
+                  <strong>Name:</strong> {msg.Name}
+                </p>
+                <p>
+                  <strong>Email:</strong> {msg.Email}
+                </p>
+                {msg.Phone && (
+                  <p>
+                    <strong>Phone:</strong> {msg.Phone}
+                  </p>
+                )}
+                {msg.Address && (
+                  <p>
+                    <strong>Address:</strong> {msg.Address}
+                  </p>
+                )}
+                {msg.Service && (
+                  <p>
+                    <strong>Service:</strong> {msg.Service}
+                  </p>
+                )}
+                <p>
+                  <strong>Message:</strong> {msg.Message}
+                </p>
+                {msg.DateTime && (
+                  <p>
+                    <strong>Date:</strong>{" "}
+                    {new Date(msg.DateTime).toLocaleString()}
+                  </p>
+                )}
+              </div>
+            ))}
           </div>
-
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-bold mb-2">
-              Password
-            </label>
-            <input
-              {...register("password", { required: true })}
-              type="password"
-              id="password"
-              placeholder="Password"
-              className="bg-transparent shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow"
-            />
-            {errors.password && (
-              <p className="text-red-500 text-xs italic">
-                Password is required
-              </p>
-            )}
-          </div>
-
-          {message && (
-            <p className="text-red-500 text-xs italic mb-3">{message}</p>
-          )}
-
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-green-500 to-emerald-200 dark:bg-gradient-to-r dark:from-blue-700 dark:to-violet-950 text-white font-bold py-2 px-8 rounded-lg focus:outline-none transition-all duration-300 cursor-pointer ease-in-out hover:scale-110 border-2"
-          >
-            Login
-          </button>
-        </form>
+        )}
       </motion.div>
     </div>
   );
 };
 
-export default AdminLogin;
+export default Messages;

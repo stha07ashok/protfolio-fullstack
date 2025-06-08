@@ -1,7 +1,153 @@
-import React from "react";
+"use client";
 
-const Messages = () => {
-  return <div>Messages</div>;
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import getBaseUrl from "@/baseUrl/baseUrl";
+
+interface Message {
+  Name: string;
+  Email: string;
+  Phone?: string;
+  Address?: string;
+  MessageText: string;
+  Service?: string;
+  DateTime?: string;
+}
+
+const PAGE_SIZE = 6;
+
+const Messages: React.FC = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await axios.get(
+          `${getBaseUrl()}/admin/message/getMessage`
+        );
+        setMessages(response.data.data);
+      } catch (err: any) {
+        setError(err.message || "An error occurred");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, []);
+
+  // Calculate total pages
+  const totalPages = Math.ceil(messages.length / PAGE_SIZE);
+
+  // Get messages for current page
+  const currentMessages = messages.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
+  // Handlers
+  const goToPrevPage = () => {
+    setCurrentPage((p) => Math.max(p - 1, 1));
+  };
+
+  const goToNextPage = () => {
+    setCurrentPage((p) => Math.min(p + 1, totalPages));
+  };
+
+  if (isLoading)
+    return <div className="p-6 text-center">Loading messages...</div>;
+  if (error)
+    return <div className="p-6 text-center text-red-600">Error: {error}</div>;
+
+  return (
+    <div className="px-4 sm:px-6 md:px-10 lg:px-20 py-6 max-w-7xl mx-auto">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center">
+        Messages
+      </h2>
+
+      {messages.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {currentMessages.map((msg, index) => (
+              <div
+                key={msg.Email + msg.DateTime + index}
+                className="p-4 border-2 border-green-500 dark:border-blue-500 rounded-xl shadow-lg text-sm sm:text-base"
+              >
+                <div className="space-y-2">
+                  <p>
+                    <strong>Name:</strong> {msg.Name}
+                  </p>
+                  <p>
+                    <strong>Email:</strong> {msg.Email}
+                  </p>
+                  {msg.Phone && (
+                    <p>
+                      <strong>Phone:</strong> {msg.Phone}
+                    </p>
+                  )}
+                  {msg.Address && (
+                    <p>
+                      <strong>Address:</strong> {msg.Address}
+                    </p>
+                  )}
+                  <p>
+                    <strong>Message:</strong> {msg.MessageText}
+                  </p>
+                  {msg.Service && (
+                    <p>
+                      <strong>Service:</strong> {msg.Service}
+                    </p>
+                  )}
+                  {msg.DateTime && (
+                    <p>
+                      <strong>Date:</strong>{" "}
+                      {new Date(msg.DateTime).toLocaleString()}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="flex justify-center items-center gap-4 mt-8">
+            <button
+              onClick={goToPrevPage}
+              disabled={currentPage === 1}
+              className={`px-4 py-2 rounded border border-green-500 dark:border-blue-500 ${
+                currentPage === 1
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-green-500 hover:text-white dark:hover:bg-blue-500"
+              }`}
+            >
+              Prev
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+              className={`px-4 py-2 rounded border border-green-500 dark:border-blue-500 ${
+                currentPage === totalPages
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-green-500 hover:text-white dark:hover:bg-blue-500"
+              }`}
+            >
+              Next
+            </button>
+          </div>
+        </>
+      ) : (
+        <p className="text-center">No messages found.</p>
+      )}
+    </div>
+  );
 };
 
 export default Messages;
