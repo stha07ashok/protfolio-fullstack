@@ -49,7 +49,7 @@ const AddProject: React.FC = () => {
     formData.append("description", data.description);
     formData.append("liveUrl", data.liveUrl);
     formData.append("githubUrl", data.githubUrl);
-    formData.append("image", data.image[0]); // assuming single image
+    formData.append("image", data.image[0]); 
 
     data.stack.forEach((tech, index) => {
       formData.append(`stack[${index}].name`, tech.name);

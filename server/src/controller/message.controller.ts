@@ -7,9 +7,6 @@ export const getMessages = async (
 ): Promise<void> => {
   try {
     const messages = await Message.findAll();
-
-    console.log("Fetched messages:", messages);
-
     res
       .status(200)
       .json({ message: "Messages fetched successfully", data: messages });
