@@ -1,12 +1,12 @@
 "use client"; // only if you're using the app directory
 
 import getBaseUrl from "@/baseUrl/baseUrl";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
-import { FaReact, FaNodeJs } from "react-icons/fa";
-import { SiTailwindcss, SiMongodb, SiExpress } from "react-icons/si";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
+import { useAuth } from "@/context/authContext";
+import { useRouter } from "next/navigation";
 type Tech = {
   name: string;
 };
@@ -22,6 +22,14 @@ type ProjectFormValues = {
 };
 
 const AddProject: React.FC = () => {
+  const { isLoggedIn, loading } = useAuth();
+  const router = useRouter();
+  useEffect(() => {
+    if (!loading && !isLoggedIn) {
+      router.push("/admin/login");
+    }
+  }, [isLoggedIn, loading, router]);
+
   const {
     register,
     control,
@@ -62,7 +70,7 @@ const AddProject: React.FC = () => {
       const response = await fetch(`${getBaseUrl()}/admin/addproject`, {
         method: "POST",
         body: formData,
-        credentials: "include", // include if your backend needs cookies/auth
+        credentials: "include",
       });
 
       const result = await response.json();
@@ -90,6 +98,12 @@ const AddProject: React.FC = () => {
     }
     reset();
   };
+
+  if (loading || !isLoggedIn) {
+    return (
+      <div className="p-10 text-center text-lg font-semibold">Loading...</div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">

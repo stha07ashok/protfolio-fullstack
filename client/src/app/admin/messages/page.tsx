@@ -5,7 +5,6 @@ import axios from "axios";
 import getBaseUrl from "@/baseUrl/baseUrl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authContext";
-// adjust path accordingly
 
 interface Message {
   Name: string;
