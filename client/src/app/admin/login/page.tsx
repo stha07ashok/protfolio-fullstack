@@ -75,11 +75,11 @@ const AdminLogin: React.FC = () => {
       whileInView={{ opacity: 1, scale: 1 }}
       transition={{ duration: 1, ease: "easeInOut" }}
       viewport={{ once: false, amount: 0.6 }}
-      className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4"
+      className="min-h-screen flex items-center justify-center  dark:bg-gray-900 px-4"
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 space-y-6"
+        className="w-full max-w-md dark:bg-gray-800 rounded-lg border-2 border-green-500 dark:border-blue-500 shadow-lg p-8 space-y-6"
         noValidate
       >
         <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-6">
