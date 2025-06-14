@@ -11,7 +11,7 @@ export const addProject = async (
     const { title, category, description, stack, liveUrl, githubUrl } =
       req.body;
 
-    // Check for uploaded file
+    // Validate image upload
     if (!req.files || !req.files.image) {
       res.status(400).json({ message: "Image is required" });
       return;
@@ -19,6 +19,7 @@ export const addProject = async (
 
     const imageFile = req.files.image as UploadedFile;
 
+    // Upload image to Cloudinary
     const uploadResult = await cloudinary.uploader.upload(
       imageFile.tempFilePath,
       {
@@ -26,12 +27,16 @@ export const addProject = async (
       }
     );
 
-    // Safely parse stack (expecting a JSON string, but fallback if it's just a word)
+    // Parse stack array (e.g. JSON stringified array of { name: string })
     let parsedStack: string[];
     try {
-      parsedStack = JSON.parse(stack);
-      if (!Array.isArray(parsedStack)) {
-        parsedStack = [String(parsedStack)];
+      const rawStack = JSON.parse(stack);
+      if (Array.isArray(rawStack)) {
+        parsedStack = rawStack.map((item: any) =>
+          typeof item === "object" && "name" in item ? item.name : String(item)
+        );
+      } else {
+        parsedStack = [String(rawStack)];
       }
     } catch {
       parsedStack = [String(stack)];
@@ -57,8 +62,28 @@ export const addProject = async (
   }
 };
 
-//get all projects
+//Admin - get all projects
 export const getAllProjects = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const projects = await Project.findAll({
+      order: [["createdAt", "DESC"]], // Optional: sort by newest first
+    });
+
+    res.status(200).json({
+      message: "Projects fetched successfully",
+      data: projects,
+    });
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
+// Frontend - Get All Projects
+export const getAllProjectsFrontend = async (
   req: Request,
   res: Response
 ): Promise<void> => {

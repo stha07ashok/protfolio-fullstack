@@ -1,7 +1,7 @@
 "use client"; // only if you're using the app directory
 
 import getBaseUrl from "@/baseUrl/baseUrl";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
@@ -22,8 +22,10 @@ type ProjectFormValues = {
 };
 
 const AddProject: React.FC = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { isLoggedIn, loading } = useAuth();
   const router = useRouter();
+
   useEffect(() => {
     if (!loading && !isLoggedIn) {
       router.push("/admin/login");
@@ -53,6 +55,18 @@ const AddProject: React.FC = () => {
   });
 
   const onSubmit: SubmitHandler<ProjectFormValues> = async (data) => {
+    setIsSubmitting(true);
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      Swal.fire({
+        icon: "error",
+        title: "Unauthorized",
+        text: "Login required to add a project",
+      });
+      setIsSubmitting(false);
+      return;
+    }
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("category", data.category);
@@ -60,17 +74,14 @@ const AddProject: React.FC = () => {
     formData.append("liveUrl", data.liveUrl);
     formData.append("githubUrl", data.githubUrl);
     formData.append("image", data.image[0]);
-
-    data.stack.forEach((tech, index) => {
-      formData.append(`stack[${index}].name`, tech.name);
-    });
-
-    // Send formData to your backend (e.g., via fetch or axios)
+    formData.append("stack", JSON.stringify(data.stack));
     try {
       const response = await fetch(`${getBaseUrl()}/admin/addproject`, {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
-        credentials: "include",
       });
 
       const result = await response.json();
@@ -96,7 +107,7 @@ const AddProject: React.FC = () => {
     } catch (error) {
       console.error("Failed to submit project:", error);
     }
-    reset();
+    setIsSubmitting(false);
   };
 
   if (loading || !isLoggedIn) {
@@ -218,9 +229,15 @@ const AddProject: React.FC = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-green-500 dark:bg-blue-500 py-2 rounded-md hover:bg-green-700 dark:hover:bg-blue-700 transition-all duration-300 cursor-pointer ease-in-out scale-100 hover:scale-105"
+          disabled={isSubmitting}
+          className={`w-full py-2 rounded-md transition-all duration-300 cursor-pointer ease-in-out scale-100 hover:scale-105
+          ${
+            isSubmitting
+              ? "bg-green-700 cursor-not-allowed"
+              : "bg-green-500 dark:bg-blue-500 hover:bg-green-600 dark:hover:bg-blue-700"
+          }`}
         >
-          Submit Project
+          {isSubmitting ? "Submitting..." : "Submit Project"}
         </button>
       </form>
     </div>

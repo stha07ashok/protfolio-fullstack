@@ -11,7 +11,7 @@ const Dashboard = () => {
   const { isLoggedIn, loading } = useAuth();
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
-  const projectsPerPage = 9; // 3 columns * 3 rows
+  const projectsPerPage = 6; // 3columns * 2 rows
   const [projects, setProjects] = useState([]);
   const [messages, setMessages] = useState([]);
 
@@ -136,7 +136,7 @@ const Dashboard = () => {
                   onClick={() =>
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
-                  className="px-4 py-2 border rounded disabled:opacity-50"
+                  className="px-4 py-2 border-2 border-green-500 dark:border-blue-500 shadow-lg rounded disabled:opacity-50"
                   disabled={currentPage === 1}
                   aria-label="Previous page"
                 >
@@ -149,7 +149,7 @@ const Dashboard = () => {
                   onClick={() =>
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
-                  className="px-4 py-2 border rounded disabled:opacity-50"
+                  className="px-4 py-2 border-2 border-green-500 dark:border-blue-500 shadow-lg rounded disabled:opacity-50"
                   disabled={currentPage === totalPages}
                   aria-label="Next page"
                 >
