@@ -3,6 +3,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import getBaseUrl from "@/baseUrl/baseUrl";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/authContext";
+// adjust path accordingly
 
 interface Message {
   Name: string;
@@ -17,18 +20,35 @@ interface Message {
 const PAGE_SIZE = 6;
 
 const Messages: React.FC = () => {
+  const { isLoggedIn, loading } = useAuth();
+  const router = useRouter();
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
+    if (loading) return; // Wait for auth loading to finish
+
+    if (!isLoggedIn) {
+      router.push("/admin/login");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
     const fetchMessages = async () => {
       try {
         const response = await axios.get(
-          `${getBaseUrl()}/admin/message/getMessage`
+          `${getBaseUrl()}/admin/message/getMessage`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setMessages(response.data.data);
       } catch (err: any) {
@@ -39,28 +59,20 @@ const Messages: React.FC = () => {
     };
 
     fetchMessages();
-  }, []);
+  }, [isLoggedIn, loading, router]);
 
-  // Calculate total pages
   const totalPages = Math.ceil(messages.length / PAGE_SIZE);
-
-  // Get messages for current page
   const currentMessages = messages.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
   );
 
-  // Handlers
-  const goToPrevPage = () => {
-    setCurrentPage((p) => Math.max(p - 1, 1));
-  };
+  const goToPrevPage = () => setCurrentPage((p) => Math.max(p - 1, 1));
+  const goToNextPage = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
 
-  const goToNextPage = () => {
-    setCurrentPage((p) => Math.min(p + 1, totalPages));
-  };
+  if (loading || isLoading)
+    return <div className="p-6 text-center">Loading...</div>;
 
-  if (isLoading)
-    return <div className="p-6 text-center">Loading messages...</div>;
   if (error)
     return <div className="p-6 text-center text-red-600">Error: {error}</div>;
 
