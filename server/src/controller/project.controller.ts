@@ -26,11 +26,22 @@ export const addProject = async (
       }
     );
 
+    // Safely parse stack (expecting a JSON string, but fallback if it's just a word)
+    let parsedStack: string[];
+    try {
+      parsedStack = JSON.parse(stack);
+      if (!Array.isArray(parsedStack)) {
+        parsedStack = [String(parsedStack)];
+      }
+    } catch {
+      parsedStack = [String(stack)];
+    }
+
     const project = await Project.create({
       title,
       category,
       description,
-      stack: JSON.parse(stack),
+      stack: parsedStack,
       image: uploadResult.secure_url,
       liveUrl,
       githubUrl,

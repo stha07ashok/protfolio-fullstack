@@ -1,10 +1,12 @@
 "use client"; // only if you're using the app directory
 
+import getBaseUrl from "@/baseUrl/baseUrl";
 import React from "react";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { FaReact, FaNodeJs } from "react-icons/fa";
 import { SiTailwindcss, SiMongodb, SiExpress } from "react-icons/si";
-
+import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
 type Tech = {
   name: string;
 };
@@ -42,21 +44,50 @@ const AddProject: React.FC = () => {
     name: "stack",
   });
 
-  const onSubmit: SubmitHandler<ProjectFormValues> = (data) => {
+  const onSubmit: SubmitHandler<ProjectFormValues> = async (data) => {
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("category", data.category);
     formData.append("description", data.description);
     formData.append("liveUrl", data.liveUrl);
     formData.append("githubUrl", data.githubUrl);
-    formData.append("image", data.image[0]); 
+    formData.append("image", data.image[0]);
 
     data.stack.forEach((tech, index) => {
       formData.append(`stack[${index}].name`, tech.name);
     });
 
     // Send formData to your backend (e.g., via fetch or axios)
-    console.log("Form submitted", data);
+    try {
+      const response = await fetch(`${getBaseUrl()}/admin/addproject`, {
+        method: "POST",
+        body: formData,
+        credentials: "include", // include if your backend needs cookies/auth
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "success",
+          title: "Project added successfully!",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+        reset();
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: result.message || "Failed to add project",
+        });
+      }
+    } catch (error) {
+      console.error("Failed to submit project:", error);
+    }
     reset();
   };
 
