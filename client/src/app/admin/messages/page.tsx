@@ -49,7 +49,13 @@ const Messages: React.FC = () => {
             },
           }
         );
-        setMessages(response.data.data);
+        const sortedMessages = response.data.data.sort(
+          (a: Message, b: Message) =>
+            new Date(b.DateTime || "").getTime() -
+            new Date(a.DateTime || "").getTime()
+        );
+
+        setMessages(sortedMessages);
       } catch (err: any) {
         setError(err.message || "An error occurred");
       } finally {
