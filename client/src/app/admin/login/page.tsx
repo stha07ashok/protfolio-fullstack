@@ -70,13 +70,7 @@ const AdminLogin: React.FC = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 1, ease: "easeInOut" }}
-      viewport={{ once: false, amount: 0.6 }}
-      className="min-h-screen flex items-center justify-center  dark:bg-gray-900 px-4"
-    >
+    <div className="min-h-screen flex items-center justify-center  dark:bg-gray-900 px-4">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-md dark:bg-gray-800 rounded-lg border-2 border-green-500 dark:border-blue-500 shadow-lg p-8 space-y-6"
@@ -149,7 +143,7 @@ const AdminLogin: React.FC = () => {
           {isSubmitting ? "Logging in..." : "Login"}
         </button>
       </form>
-    </motion.div>
+    </div>
   );
 };
 

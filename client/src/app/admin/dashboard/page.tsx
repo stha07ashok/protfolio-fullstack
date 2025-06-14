@@ -1,33 +1,35 @@
 "use client";
 import getBaseUrl from "@/baseUrl/baseUrl";
+import { useAuth } from "@/context/authContext";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaExternalLinkAlt, FaGithub } from "react-icons/fa";
 
 const Dashboard = () => {
-  const [projects, setProjects] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(true);
-
+  const { isLoggedIn, loading } = useAuth();
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 9; // 3 columns * 3 rows
+  const [projects, setProjects] = useState([]);
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token && !loading && !isLoggedIn) {
+      router.replace("/admin/login");
+      return;
+    }
+
     const fetchDashboardData = async () => {
       try {
-        const token = localStorage.getItem("token");
-
         const [projectsRes, messagesRes] = await Promise.all([
           fetch(`${getBaseUrl()}/admin/getallprojects`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }),
           fetch(`${getBaseUrl()}/admin/message/getMessage`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
 
@@ -38,13 +40,11 @@ const Dashboard = () => {
         setMessages(messagesData.data || []);
       } catch (error) {
         console.error("Failed to fetch dashboard data", error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchDashboardData();
-  }, []);
+  }, [isLoggedIn, loading, router]);
 
   const totalPages = Math.ceil(projects.length / projectsPerPage);
   const startIndex = (currentPage - 1) * projectsPerPage;
