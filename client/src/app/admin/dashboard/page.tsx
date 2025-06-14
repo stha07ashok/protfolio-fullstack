@@ -81,7 +81,7 @@ const Dashboard = () => {
               {currentProjects.map((project: any, index: number) => (
                 <div
                   key={index}
-                  className="border-2 border-green-500 dark:border-500 rounded-lg shadow-lg p-4 flex flex-col hover:scale-[1.03] transition-transform duration-300 cursor-pointer"
+                  className="border-2 border-green-500 dark:border-blue-500 rounded-lg shadow-lg p-4 flex flex-col hover:scale-[1.03] transition-transform duration-300 cursor-pointer"
                 >
                   <Image
                     src={
