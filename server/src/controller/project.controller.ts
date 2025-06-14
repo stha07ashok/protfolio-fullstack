@@ -56,3 +56,23 @@ export const addProject = async (
     res.status(500).json({ message: "Internal server error", error });
   }
 };
+
+//get all projects
+export const getAllProjects = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const projects = await Project.findAll({
+      order: [["createdAt", "DESC"]], // Optional: sort by newest first
+    });
+
+    res.status(200).json({
+      message: "Projects fetched successfully",
+      data: projects,
+    });
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
