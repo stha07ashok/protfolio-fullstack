@@ -1,13 +1,6 @@
 // src/models/project.model.ts
 
-import {
-  Table,
-  Column,
-  Model,
-  DataType,
-  PrimaryKey,
-  AutoIncrement,
-} from "sequelize-typescript";
+import { Table, Column, Model, DataType } from "sequelize-typescript";
 
 @Table({
   tableName: "projects",
