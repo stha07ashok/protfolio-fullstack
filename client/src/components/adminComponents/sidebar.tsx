@@ -1,12 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const sideBarData = [
-  { title: "Dashboard", href: "/admin/dashboard" },
-  { title: "Messages", href: "/admin/messages" },
-  { title: "Add Project", href: "/admin/add-project" },
-];
+import { sideBarData } from "@/constants/sidebar";
 
 const Dashboard = () => {
   const pathname = usePathname();

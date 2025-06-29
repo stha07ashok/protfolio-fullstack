@@ -24,7 +24,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <Navbar />
         <div className="flex flex-row">
           {isLoggedIn && (
-            <aside className="w-64 border-r-2 border-white shadow-lg">
+            <aside className="w-64 border-r-2 border-white shadow-lg hidden md:flex ">
               <Sidebar />
             </aside>
           )}

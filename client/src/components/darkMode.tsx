@@ -13,7 +13,7 @@ export default function ThemeToggle() {
         className="pr-5"
       >
         {theme === "dark" ? (
-          <div className="hoverEffect text-[26px] text-black dark:text-white font-bold">
+          <div className="hoverEffect text-[26px] text-black dark:text-white font-bold ">
             <FaRegMoon />
           </div>
         ) : (
