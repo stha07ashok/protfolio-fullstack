@@ -11,7 +11,7 @@ import React, {
 interface AuthContextType {
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-  logout: () => Promise<void>;
+  logout: () => void;
   loading: boolean;
 }
 
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  const logout = async () => {
+  const logout = () => {
     try {
       // Call your logout endpoint here if needed
       localStorage.removeItem("token");

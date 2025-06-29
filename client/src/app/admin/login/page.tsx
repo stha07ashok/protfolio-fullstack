@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
@@ -14,6 +14,7 @@ type LoginFormValues = {
 };
 
 const AdminLogin: React.FC = () => {
+  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const {
     register,
@@ -25,6 +26,10 @@ const AdminLogin: React.FC = () => {
       password: "",
     },
   });
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
     try {
@@ -41,7 +46,7 @@ const AdminLogin: React.FC = () => {
         localStorage.setItem("token", result.token);
         window.dispatchEvent(new Event("authChange"));
 
-        Swal.fire({
+        await Swal.fire({
           toast: true,
           position: "top-end",
           icon: "success",
@@ -53,14 +58,14 @@ const AdminLogin: React.FC = () => {
 
         router.push("/admin/dashboard");
       } else {
-        Swal.fire({
+        await Swal.fire({
           icon: "error",
           title: "Login failed",
           text: result.message || "Invalid credentials",
         });
       }
     } catch (error) {
-      Swal.fire({
+      await Swal.fire({
         icon: "error",
         title: "Error",
         text: "Something went wrong while logging in.",
@@ -69,8 +74,32 @@ const AdminLogin: React.FC = () => {
     }
   };
 
+  if (!isMounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center dark:bg-gray-900 px-4">
+        <div className="w-full max-w-md dark:bg-gray-800 rounded-lg border-2 border-transparent shadow-lg p-8 space-y-6">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mx-auto mb-6"></div>
+            <div className="space-y-4">
+              <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-1/4"></div>
+              <div className="h-10 bg-gray-300 dark:bg-gray-600 rounded"></div>
+              <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-1/4"></div>
+              <div className="h-10 bg-gray-300 dark:bg-gray-600 rounded"></div>
+              <div className="h-10 bg-gray-400 dark:bg-gray-500 rounded mt-6"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center  dark:bg-gray-900 px-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen flex items-center justify-center dark:bg-gray-900 px-4"
+    >
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-md dark:bg-gray-800 rounded-lg border-2 border-green-500 dark:border-blue-500 shadow-lg p-8 space-y-6"
@@ -143,7 +172,7 @@ const AdminLogin: React.FC = () => {
           {isSubmitting ? "Logging in..." : "Login"}
         </button>
       </form>
-    </div>
+    </motion.div>
   );
 };
 
