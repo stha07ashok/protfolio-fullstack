@@ -89,7 +89,7 @@ const Messages: React.FC = () => {
 
       {messages.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6">
             {currentMessages.map((msg, index) => (
               <div
                 key={msg.Email + msg.DateTime + index}
